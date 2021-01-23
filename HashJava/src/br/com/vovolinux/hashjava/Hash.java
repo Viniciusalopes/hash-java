@@ -9,10 +9,70 @@
  */
 package br.com.vovolinux.hashjava;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
- * @author vovomint
+ * @author vovomint<br>
+ * SOURCE: https://codare.aurelio.net/2007/02/02/java-gerando-codigos-hash-md5-sha/
  */
 public class Hash {
-    
+
+    private static String getHexa(byte[] bytes) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            int up = ((bytes[i] >> 4) & 0xf) << 4;
+            int down = bytes[i] & 0xf;
+            if (up == 0) {
+                s.append('0');
+            }
+            s.append(Integer.toHexString(up | down));
+        }
+        return s.toString();
+    }
+
+    private static byte[] getHash(String phrase, String algorithm) throws Exception {
+        try {
+            if (algorithm.trim().length() == 0) {
+                throw new Exception("Enter the algorithm!");
+            }
+
+            String[] algorithms = new String[]{"MD5", "SHA-1", "SHA-256"};
+            List<String> list = Arrays.asList(algorithms);
+            if (!list.contains(algorithm)) {
+                throw new Exception("Invalid algorithm!");
+            }
+
+            MessageDigest md = MessageDigest.getInstance(algorithm);
+            md.update(phrase.getBytes());
+            return md.digest();
+            
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
+    }
+
+    public static String encrypt(String text, String algorithm) throws Exception {
+        try {
+            return getHexa(getHash(text, algorithm));
+        } catch (Exception e) {
+            throw new Exception("Encrypt error: " + getErrorMessage(e));
+        }
+    }
+
+    /**
+     * Obtém um texto sobre o motivo da Exception.
+     *
+     * @param e Exception to get the message text.
+     * @return
+     */
+    private static String getErrorMessage(Exception e) {
+        return (e.getMessage() != null) ? e.getMessage()
+                : ((e.getCause() != null) ? e.getCause().getMessage()
+                : ((e.getLocalizedMessage() != null) ? e.getLocalizedMessage() : e.getStackTrace().toString()));
+    }
+
 }
