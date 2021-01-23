@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  *
- * @author vovomint<br>
+ * @author Vovolinux<br>
  * SOURCE: https://codare.aurelio.net/2007/02/02/java-gerando-codigos-hash-md5-sha/
  */
 public class Hash {
@@ -49,7 +49,7 @@ public class Hash {
             MessageDigest md = MessageDigest.getInstance(algorithm);
             md.update(phrase.getBytes());
             return md.digest();
-            
+
         } catch (NoSuchAlgorithmException e) {
             return null;
         }
@@ -63,8 +63,12 @@ public class Hash {
         }
     }
 
+    public static boolean areIdentical(String strHash, String text, String algorithm) throws Exception {
+        return strHash.equals(encrypt(text, algorithm));
+    }
+
     /**
-     * Obtém um texto sobre o motivo da Exception.
+     * Gets a text about the reason for the Exception.
      *
      * @param e Exception to get the message text.
      * @return
